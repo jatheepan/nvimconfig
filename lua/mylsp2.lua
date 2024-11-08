@@ -12,7 +12,7 @@ require('mason').setup({})
 require('mason-lspconfig').setup({
   ensure_installed = {
     'bashls',
-    'tsserver',
+    'ts_ls',
     'jsonls',
     'vimls',
     'yamlls',

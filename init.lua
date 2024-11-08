@@ -99,12 +99,27 @@ local plugins = {
   },
   { 'williamboman/mason-lspconfig.nvim' },
   {'VonHeikemen/lsp-zero.nvim', branch = 'v3.x'},
-  {'neovim/nvim-lspconfig', commit = '0ef6459'},
+  {'neovim/nvim-lspconfig'},
+  --{'neovim/nvim-lspconfig', commit = '0ef6459'},
   {'hrsh7th/cmp-nvim-lsp'},
   {'hrsh7th/nvim-cmp'},
   {'L3MON4D3/LuaSnip'},
 -- end
-  {'mhartington/formatter.nvim'}
+  {'mhartington/formatter.nvim'},
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    ---@type Flash.Config
+    opts = {},
+    -- stylua: ignore
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
+  }
 }
 
 require("lazy").setup(plugins)
@@ -163,6 +178,7 @@ vim.o.background = "dark" -- or "light" for light mode
 vim.cmd("let g:gruvbox_transparent_bg = 1")
 vim.cmd("autocmd VimEnter * hi Normal ctermbg=NONE guibg=NONE")
 vim.cmd([[colorscheme gruvbox]])
+
 vim.opt.guicursor = ""
 vim.o.showmatch = true
 vim.o.hlsearch = true
