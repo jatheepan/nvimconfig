@@ -15,7 +15,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 local plugins = {
-  "direnv/direnv.vim",
   "nvim-treesitter/nvim-treesitter",
   {
     "christoomey/vim-tmux-navigator",
@@ -63,6 +62,7 @@ local plugins = {
   "dense-analysis/ale",
   "hrsh7th/nvim-cmp",
   "tpope/vim-fugitive",
+  "shumphrey/fugitive-gitlab.vim",
   "prettier/vim-prettier",
   "editorconfig/editorconfig-vim",
   "mileszs/ack.vim",
@@ -97,15 +97,40 @@ local plugins = {
     lazy = false,
     config = true,
   },
+  {'neovim/nvim-lspconfig', config = function() 
+    local lspconfig = require('lspconfig')
+      -- swift lsp setup. unable to setup sourcekit-lsp :(
+      --lspconfig.sourcekit.setup {}
+
+      --vim.api.nvim_create_autocmd('LspAttach', {
+          --desc = 'LSP Actions',
+          --callback = function(args)
+              --vim.keymap.set('n', 'K', vim.lsp.buf.hover, {noremap = true, silent = true})
+              --vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {noremap = true, silent = true})
+          --end,
+      --})
+  end},
   { 'williamboman/mason-lspconfig.nvim' },
   {'VonHeikemen/lsp-zero.nvim', branch = 'v3.x'},
-  {'neovim/nvim-lspconfig'},
-  --{'neovim/nvim-lspconfig', commit = '0ef6459'},
   {'hrsh7th/cmp-nvim-lsp'},
   {'hrsh7th/nvim-cmp'},
   {'L3MON4D3/LuaSnip'},
 -- end
-  {'mhartington/formatter.nvim'},
+  {'mhartington/formatter.nvim', config = function() 
+    require("formatter").setup({
+      filetype = {
+        swift = {
+          function()
+            return {
+              exe = "swift-format",
+              args = { "--in-place" }, -- Add any desired arguments here
+            }
+          end,
+        },
+      },
+    })
+  end,
+  },
   {
     "folke/flash.nvim",
     event = "VeryLazy",
@@ -145,6 +170,7 @@ require("neo-tree").setup({
 require("mylsp2")
 require("tabby")
 require("mytelescope")
+require("customfns")
 require("gruvbox").setup({
   terminal_colors = true, -- add neovim terminal colors
   undercurl = true,
@@ -195,5 +221,6 @@ vim.o.syntax = "on"
 vim.o.termguicolors = true
 vim.api.nvim_set_keymap("n", "<leader><space>", ":Neotree toggle reveal_force_cwd<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>ch", ":CopilotChatToggle<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<leader>ca", ":lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
 --vim.api.nvim_set_keymap("n", "<leader>ff", ":FZF<enter>", { noremap = true, silent = true })
 vim.g.ale_fix_on_save = 1

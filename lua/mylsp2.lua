@@ -1,4 +1,5 @@
 local lsp_zero = require('lsp-zero')
+local lspconfig = require("lspconfig")
 
 lsp_zero.on_attach(function(client, bufnr)
   -- see :help lsp-zero-keybindings
@@ -27,4 +28,7 @@ require('mason-lspconfig').setup({
   handlers = {
     lsp_zero.default_setup,
   },
+})
+require'lspconfig'.sourcekit.setup({
+  root_dir = lspconfig.util.root_pattern("Package.swift", ".git", "*.xcodeproj", "*.xcworkspace"),
 })
