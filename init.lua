@@ -48,11 +48,12 @@ local plugins = {
   "github/copilot.vim",
     {
     "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "canary",
+    branch = "main",
     dependencies = {
       { "github/copilot.vim" },
-      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+      { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log wrapper
     },
+    build = "make tiktoken",
     opts = {
       debug = true, -- Enable debugging
       -- See Configuration section for rest
@@ -62,6 +63,7 @@ local plugins = {
   "dense-analysis/ale",
   "hrsh7th/nvim-cmp",
   "tpope/vim-fugitive",
+  "lewis6991/gitsigns.nvim",
   "shumphrey/fugitive-gitlab.vim",
   "prettier/vim-prettier",
   "editorconfig/editorconfig-vim",
@@ -144,7 +146,30 @@ local plugins = {
       { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
       { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
     },
+  },
+  {
+    "wojciech-kulik/xcodebuild.nvim",
+    dependencies = {
+      -- Uncomment a picker that you want to use, snacks.nvim might be additionally 
+      -- useful to show previews and failing snapshots.
+
+      -- You must select at least one:
+      "nvim-telescope/telescope.nvim",
+      -- "ibhagwan/fzf-lua",
+      -- "folke/snacks.nvim", -- (optional) to show previews
+
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-tree.lua", -- (optional) to manage project files
+      "stevearc/oil.nvim", -- (optional) to manage project files
+      "nvim-treesitter/nvim-treesitter", -- (optional) for Quick tests support (required Swift parser)
+    },
+    config = function()
+      require("xcodebuild").setup({
+          -- put some options here or leave it empty to use default settings
+      })
+    end,
   }
+
 }
 
 require("lazy").setup(plugins)
@@ -167,6 +192,7 @@ require("neo-tree").setup({
   --icon = {}
 --})
 -- require('lspconfig').tsserver.setup{}
+require("mylsp")
 require("mylsp2")
 require("tabby")
 require("mytelescope")
@@ -200,6 +226,11 @@ require("gruvbox").setup({
   },
 })
 
+require("CopilotChat").setup({
+  debug = true, -- Enable debugging
+  model = "claude-haiku-4.5",
+})
+
 vim.o.background = "dark" -- or "light" for light mode
 vim.cmd("let g:gruvbox_transparent_bg = 1")
 vim.cmd("autocmd VimEnter * hi Normal ctermbg=NONE guibg=NONE")
@@ -224,3 +255,7 @@ vim.api.nvim_set_keymap("n", "<leader>ch", ":CopilotChatToggle<CR>", { noremap =
 vim.api.nvim_set_keymap("n", "<leader>ca", ":lua vim.lsp.buf.code_action()<CR>", { noremap = true, silent = true })
 --vim.api.nvim_set_keymap("n", "<leader>ff", ":FZF<enter>", { noremap = true, silent = true })
 vim.g.ale_fix_on_save = 1
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+  pattern = "*.hbs",
+  command = "set filetype=html"
+})
